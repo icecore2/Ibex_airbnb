@@ -3,8 +3,8 @@
 import pytest
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-from search_results_page import SearchResultsPage
-from highest_rating_page import HighestRatingPage
+from airbnb.actions.search_results_page import SearchResultsPage
+from airbnb.actions.highest_rating_page import HighestRatingPage
 
 @pytest.fixture(scope="module")
 def driver():

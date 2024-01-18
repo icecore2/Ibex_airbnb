@@ -2,7 +2,7 @@ import re
 
 from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.common.by import By
-from BasePage import BasePage
+from airbnb.infra.BasePage import BasePage
 
 
 class SearchResultsPage(BasePage):
@@ -29,7 +29,7 @@ class SearchResultsPage(BasePage):
                     if numeric_value > max_value:
                         max_value = numeric_value
                     if numeric_value > highest_score:
-                        highest_score = numeric_value  # Update the highest score
+                        highest_score = numeric_value
             except StaleElementReferenceException:
                 # Handle StaleElementReferenceException by attempting to locate the element again
                 elements = self.wait_for_elements_presence(

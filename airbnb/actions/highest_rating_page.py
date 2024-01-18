@@ -1,6 +1,6 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
-from BasePage import BasePage
+from airbnb.infra.BasePage import BasePage
 
 class HighestRatingPage(BasePage):
     def get_ratings_list(self):
