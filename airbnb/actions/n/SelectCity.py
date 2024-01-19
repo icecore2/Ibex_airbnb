@@ -13,23 +13,32 @@ class SelectCity(unittest.TestCase):
         self.driver = webdriver.Chrome(options=chrome_options)
         self.driver.maximize_window()
 
-
-
     def test_search_location(self):
         self.driver.get("https://www.airbnb.com/")
 
-        # Wait for the element to be clickable
+        # Wait for the search input field to be clickable
         try:
-            element = WebDriverWait(self.driver, 10).until(
+            search_input = WebDriverWait(self.driver, 10).until(
                 EC.element_to_be_clickable((By.XPATH, "//input[@id='bigsearch-query-location-input']"))
             )
         except:
-            print("Element not found after 10 seconds")
+            print("Search input element not found after 10 seconds")
 
-        # Proceed with element interaction if found
-        element.click()
-        text = element.get_attribute("value")
-        print("The text is:", text)
+        # Send keys to the search input field
+        search_input.send_keys("Amsterdam, Netherlands")
+
+        # Wait for the dropdown list to appear
+        try:
+            dropdown_option = WebDriverWait(self.driver, 10).until(
+                EC.visibility_of_element_located((By.XPATH, "//div['*' and text()='Amsterdam, Netherlands']"))
+            )
+        except:
+            print("Dropdown option not found after sending keys")
+
+        # Click on the first option in the dropdown list
+        dropdown_option.click()
 
 if __name__ == "__main__":
     unittest.main()
+
+
