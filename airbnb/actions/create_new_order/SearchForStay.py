@@ -1,4 +1,6 @@
 import unittest
+from datetime import datetime, timedelta
+
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -11,8 +13,9 @@ class SearchForStay:
         self.url = "https://www.airbnb.com/"
         self.search_input_xpath = "//input[@id='bigsearch-query-location-input']"
         self.dropdown_option_xpath = "//div[contains(text(), 'Amsterdam, Netherlands')]"
-        self.checkin_date_xpath = "//div[@data-testid='calendar-day-01/20/2024']"
-        self.checkout_date_xpath = "//div[@data-testid='calendar-day-01/20/2024']"
+        self.date = "//div[@data-testid='calendar-day-{}']"
+        # self.checkin_date_xpath = "//div[@data-testid='calendar-day-01/20/2024']"
+        # self.checkout_date_xpath = "//div[@data-testid='calendar-day-01/20/2024']"
         self.one_day_plus_xpath = "//span[normalize-space()='1 day']"
         self.guests_button_xpath = "//div[text()='Who']/following-sibling::div[text()='Add guests']"
         self.adults_increase_button_xpath = "//button[@data-testid='stepper-adults-increase-button']"
@@ -46,9 +49,21 @@ class SearchForStay:
         dropdown_option.click()
 
     def select_dates(self):
+        # Calculate the current date and the next day
+        current_date = datetime.now()
+        next_day = current_date + timedelta(days=1)
+
+        # Format the dates as strings
+        current_date_str = current_date.strftime("%m/%d/%Y")
+        next_day_str = next_day.strftime("%m/%d/%Y")
+
+        # Construct XPaths with dynamic date values
+        checkin_date_xpath =self.date.format(next_day_str)
+        checkout_date_xpath = self.date.format(next_day_str)
+
         try:
             checkin_date = WebDriverWait(self.driver, 10).until(
-                EC.element_to_be_clickable((By.XPATH, self.checkin_date_xpath))
+                EC.element_to_be_clickable((By.XPATH, checkin_date_xpath))
             )
         except:
             print("Check-in date element not found after 10 seconds")
@@ -58,7 +73,7 @@ class SearchForStay:
 
         try:
             checkout_date = WebDriverWait(self.driver, 10).until(
-                EC.element_to_be_clickable((By.XPATH, self.checkout_date_xpath))
+                EC.element_to_be_clickable((By.XPATH, checkout_date_xpath))
             )
         except:
             print("Check-out date element not found after selecting check-in date")
@@ -75,6 +90,7 @@ class SearchForStay:
 
         # Click on "1 day plus"
         one_day_plus.click()
+
 
     def select_guests(self):
         try:
@@ -128,8 +144,16 @@ class SearchForStay:
 
     def click_search_button(self):
         try:
-            search_button = WebDriverWait(self.driver, 10).until(
+            search_button = WebDriverWait(self.driver, 20).until(
                 EC.element_to_be_clickable((By.XPATH, self.search_button_xpath))
             )
         except:
             print("Search button not found after selecting guests")
+            return
+
+        try:
+            # Attempt to click using standard WebDriver click method
+            search_button.click()
+        except:
+            # If standard click doesn't work, try using JavaScript click
+            self.driver.execute_script("arguments[0].click();", search_button)
