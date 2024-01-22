@@ -1,28 +1,34 @@
-import unittest
-from datetime import datetime, timedelta
+"""This module defines the SearchForStay class, which encapsulates the functionality for performing a search for a
+stay on the Airbnb platform. The class utilizes Selenium WebDriver for browser automation and interacts with various
+elements on the web page, such as search input, date selection, guest count, and the search button. The code includes
+methods like 'city_search', 'select_dates', 'select_guests', 'verify_guests_count', and 'click_search_button' to
+navigate through the search process, and it handles potential timeouts with informative print statements. The XPaths
+for different page elements are defined in the OrderSearchConst module. Overall, the class facilitates the automation
+of the Airbnb search process with configurable inputs such as location, dates, and guest counts."""
 
+from datetime import datetime, timedelta
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+
+from airbnb.infra.constans.OrderSearchConst import OrderSearchConst
 
 
 class SearchForStay:
 
     def __init__(self, driver):
         self.driver = driver
-        self.url = "https://www.airbnb.com/"
-        self.search_input_xpath = "//input[@id='bigsearch-query-location-input']"
-        self.dropdown_option_xpath = "//div[contains(text(), 'Amsterdam, Netherlands')]"
-        self.date = "//div[@data-testid='calendar-day-{}']"
-        # self.checkin_date_xpath = "//div[@data-testid='calendar-day-01/20/2024']"
-        # self.checkout_date_xpath = "//div[@data-testid='calendar-day-01/20/2024']"
-        self.one_day_plus_xpath = "//span[normalize-space()='1 day']"
-        self.guests_button_xpath = "//div[text()='Who']/following-sibling::div[text()='Add guests']"
-        self.adults_increase_button_xpath = "//button[@data-testid='stepper-adults-increase-button']"
-        self.children_increase_button_xpath = "//button[@data-testid='stepper-children-increase-button']"
-        self.adults_count_xpath = "//span[normalize-space()='2 Adults']"
-        self.children_count_xpath = "//span[normalize-space()='1 Children']"
-        self.search_button_xpath = "//div[ '*'and text()='Search']"
+        self.url = OrderSearchConst.URL
+        self.search_input_xpath = OrderSearchConst.SEARCH_INPUT_XPATH
+        self.dropdown_option_xpath = OrderSearchConst.DROPDOWN_OPTION_XPATH
+        self.date_xpath_format = OrderSearchConst.DATE_XPATH  # Change the attribute name
+        self.one_day_plus_xpath = OrderSearchConst.ONE_DAY_PLUS_XPATH
+        self.guests_button_xpath = OrderSearchConst.GUESTS_BUTTON_XPATH
+        self.adults_increase_button_xpath = OrderSearchConst.ADULTS_INCREASE_BUTTON_XPATH
+        self.children_increase_button_xpath = OrderSearchConst.CHILDREN_INCREASE_BUTTON_XPATH
+        self.adults_count_xpath = OrderSearchConst.ADULTS_COUNT_XPATH
+        self.children_count_xpath = OrderSearchConst.CHILDREN_COUNT_XPATH
+        self.search_button_xpath = OrderSearchConst.SEARCH_BUTTON_XPATH
 
     def navigate_to_airbnb(self):
         self.driver.get(self.url)
@@ -35,7 +41,6 @@ class SearchForStay:
         except:
             print("Search input element not found after 10 seconds")
 
-        # Send keys to the search input field
         search_input.send_keys(location)
 
         try:
@@ -45,21 +50,17 @@ class SearchForStay:
         except:
             print(f"Dropdown option for {location} not found after sending keys")
 
-        # Click on the dropdown option
         dropdown_option.click()
 
     def select_dates(self):
-        # Calculate the current date and the next day
         current_date = datetime.now()
         next_day = current_date + timedelta(days=1)
 
-        # Format the dates as strings
         current_date_str = current_date.strftime("%m/%d/%Y")
         next_day_str = next_day.strftime("%m/%d/%Y")
 
-        # Construct XPaths with dynamic date values
-        checkin_date_xpath =self.date.format(next_day_str)
-        checkout_date_xpath = self.date.format(next_day_str)
+        checkin_date_xpath = self.date_xpath_format.format(next_day_str)
+        checkout_date_xpath = self.date_xpath_format.format(next_day_str)
 
         try:
             checkin_date = WebDriverWait(self.driver, 10).until(
@@ -68,7 +69,6 @@ class SearchForStay:
         except:
             print("Check-in date element not found after 10 seconds")
 
-        # Click on the check-in date
         checkin_date.click()
 
         try:
@@ -78,7 +78,6 @@ class SearchForStay:
         except:
             print("Check-out date element not found after selecting check-in date")
 
-        # Click on the checkout date
         checkout_date.click()
 
         try:
@@ -88,9 +87,7 @@ class SearchForStay:
         except:
             print("One day plus element not found after selecting check-out date")
 
-        # Click on "1 day plus"
         one_day_plus.click()
-
 
     def select_guests(self):
         try:
@@ -100,7 +97,6 @@ class SearchForStay:
         except:
             print("Guests button element not found after 10 seconds")
 
-        # Click on the guests button
         guests_button.click()
 
         try:
@@ -110,7 +106,6 @@ class SearchForStay:
         except:
             print("Adults increase button not found after clicking on guests button")
 
-        # Click on the increase button for adults
         adults_increase_button.click()
         adults_increase_button.click()  # Additional click
 
@@ -121,7 +116,6 @@ class SearchForStay:
         except:
             print("Children increase button not found after clicking on guests button")
 
-        # Click on the increase button for children
         children_increase_button.click()
 
     def verify_guests_count(self):
@@ -152,8 +146,6 @@ class SearchForStay:
             return
 
         try:
-            # Attempt to click using standard WebDriver click method
             search_button.click()
         except:
-            # If standard click doesn't work, try using JavaScript click
             self.driver.execute_script("arguments[0].click();", search_button)

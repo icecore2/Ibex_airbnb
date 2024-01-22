@@ -18,7 +18,6 @@ def setup():
     driver.get("https://www.airbnb.com/")
     driver.maximize_window()
     yield driver
-    driver.quit()
 
 
 @pytest.mark.priority1

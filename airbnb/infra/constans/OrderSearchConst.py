@@ -1,0 +1,12 @@
+class OrderSearchConst:
+    URL = "https://www.airbnb.com/"
+    SEARCH_INPUT_XPATH = "//input[@id='bigsearch-query-location-input']"
+    DROPDOWN_OPTION_XPATH = "//div[contains(text(), 'Amsterdam, Netherlands')]"
+    DATE_XPATH = "//div[@data-testid='calendar-day-{}']"
+    ONE_DAY_PLUS_XPATH = "//span[normalize-space()='1 day']"
+    GUESTS_BUTTON_XPATH = "//div[text()='Who']/following-sibling::div[text()='Add guests']"
+    ADULTS_INCREASE_BUTTON_XPATH = "//button[@data-testid='stepper-adults-increase-button']"
+    CHILDREN_INCREASE_BUTTON_XPATH = "//button[@data-testid='stepper-children-increase-button']"
+    ADULTS_COUNT_XPATH = "//span[normalize-space()='2 Adults']"
+    CHILDREN_COUNT_XPATH = "//span[normalize-space()='1 Children']"
+    SEARCH_BUTTON_XPATH = "//div[ '*'and text()='Search']"

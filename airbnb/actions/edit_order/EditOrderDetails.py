@@ -1,7 +1,19 @@
+"""This module defines the EditOrderDetails class, which is responsible for automating the process of editing order
+details on the Airbnb platform. The class utilizes Selenium WebDriver for browser automation and interacts with
+various elements on the web page, such as guests dropdown, date pickers, and date inputs. The code includes methods
+like 'edit_guests_number', 'change_dates', and 'set_date_picker_value' to modify the number of guests and change
+reservation dates. The XPaths for different page elements are defined in the EditConst module. The class provides
+functionality to open dropdowns, click buttons, and input new date values, and it verifies the changes made to guests
+count and reservation dates. Additionally, the code incorporates WebDriverWait for handling potential delays during
+element interactions."""
+
+
 from datetime import datetime, timedelta
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+
+from airbnb.infra.constans.EditConst import EditConst
 
 
 class EditOrderDetails:
@@ -10,9 +22,8 @@ class EditOrderDetails:
         self.wait = WebDriverWait(driver, 20)
 
     def edit_guests_number(self):
-        guests_dropdown_locator = By.XPATH, "//div[@id='GuestPicker-book_it-trigger']"
-        decrease_button_locator = By.XPATH, ("//button[@data-testid='GuestPicker-book_it-form-children-stepper"
-                                             "-decrease-button']")
+        guests_dropdown_locator = By.XPATH, EditConst.GUESTS_DROPDOWN_XPATH
+        decrease_button_locator = By.XPATH, EditConst.DECREASE_BUTTON_XPATH
 
         # Open the Guests dropdown
         guests_dropdown = self.wait.until(EC.element_to_be_clickable(guests_dropdown_locator))
@@ -23,14 +34,14 @@ class EditOrderDetails:
         decrease_button.click()
 
         # Verify the number of children is now '0'
-        children_count_locator = By.XPATH, "//span[@data-testid='children-counter']"
+        children_count_locator = By.XPATH, EditConst.CHILDREN_COUNT_XPATH
         children_count = self.wait.until(EC.visibility_of_element_located(children_count_locator))
         children_count_text = children_count.text.strip()
         assert children_count_text == "0", "Children count is not '0'."
 
     def change_dates(self):
-        check_in_locator = By.XPATH, "//div[@data-testid='change-dates-checkIn']"
-        check_out_locator = By.XPATH, "//div[@data-testid='change-dates-checkOut']"
+        check_in_locator = By.XPATH, EditConst.CHECK_IN_XPATH
+        check_out_locator = By.XPATH, EditConst.CHECK_OUT_XPATH
 
         # Click on CheckIn and CheckOut to open date pickers
         check_in_element = self.wait.until(EC.element_to_be_clickable(check_in_locator))

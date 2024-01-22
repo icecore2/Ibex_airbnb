@@ -11,10 +11,10 @@ class CloseAlert:
             # Add a delay of 3 seconds
             time.sleep(3)
 
-            # Press the TAB key
+
             pyautogui.press('tab')
 
-            # Press the ENTER key
+
             pyautogui.press('enter')
 
         except Exception as e:

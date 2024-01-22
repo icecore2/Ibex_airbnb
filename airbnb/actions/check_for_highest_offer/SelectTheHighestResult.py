@@ -1,9 +1,18 @@
-import re
 
+"""This module defines the SelectTheHighestResult class, which extends the BasePage class in the airbnb. Infra
+package. The primary purpose of this class is to provide functionality for interacting with search results and
+selecting the listing with the highest numeric rating. The class includes methods such as 'click_page_with_max_value'
+to click on an element within the search results based on a maximum numeric value and 'click_highest_rating_listing'
+to click on the listing with the highest rating. The code also extracts ratings information from elements identified
+by the provided XPaths in the OrderListingConst module, handles scenarios such as stale element references,
+and includes informative print statements to convey the outcome of the operations."""
+
+import re
 from selenium.common import StaleElementReferenceException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 from airbnb.infra.BasePage import BasePage
+from airbnb.infra.constans.OrderListingConst import OrderListingConst
 
 
 class SelectTheHighestResult(BasePage):
@@ -12,11 +21,11 @@ class SelectTheHighestResult(BasePage):
 
     def click_page_with_max_value(self, max_value):
         elements = self.wait_for_elements_presence(
-            By.XPATH, "//a[normalize-space() and translate(text(), '0123456789', '') = '']"
+            By.XPATH, OrderListingConst.ELEMENT_XPATH
         )
 
         elements_with_numbers = []
-        highest_score = 0  # Track the highest score
+        highest_score = 0
 
         for e in elements:
             try:
@@ -29,14 +38,14 @@ class SelectTheHighestResult(BasePage):
                     if numeric_value > highest_score:
                         highest_score = numeric_value
             except StaleElementReferenceException:
-                # Handle StaleElementReferenceException by attempting to locate the element again
+
                 elements = self.wait_for_elements_presence(
-                    By.XPATH, "//a[normalize-space() and translate(text(), '0123456789', '') = '']"
+                    By.XPATH, OrderListingConst.ELEMENT_XPATH
                 )
                 continue
 
         if highest_score < 2:
-            if self.driver.find_elements(By.XPATH, "//button[@aria-current='page']"):
+            if self.driver.find_elements(By.XPATH, OrderListingConst.BUTTON_XPATH):
                 print("Only one page found")
             else:
                 print("No element with numeric values found.")
@@ -53,11 +62,10 @@ class SelectTheHighestResult(BasePage):
             if not elements_with_numbers:
                 print("No element with numeric values found.")
 
-        print(f"Highest Score: {highest_score}")  # Print the highest score
-
+        print(f"Highest Score: {highest_score}")
 
     def get_ratings_list(self):
-        rating_elements = self.wait_for_elements_presence(By.XPATH, '//span[@aria-label]')
+        rating_elements = self.wait_for_elements_presence(By.XPATH, OrderListingConst.RATING_XPATH)
 
         ratings_list = []
 
@@ -86,7 +94,7 @@ class SelectTheHighestResult(BasePage):
         highest_rating_element = sorted_ratings[0][2]
 
         self.wait_for_element_presence(
-            By.XPATH, '//span[@aria-label]'
+            By.XPATH, OrderListingConst.RATING_XPATH
         )
 
         ActionChains(self.driver).move_to_element(highest_rating_element).click().perform()

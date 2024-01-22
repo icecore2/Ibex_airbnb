@@ -1,3 +1,11 @@
+"""This module defines the ReserveOrder class, responsible for automating the process of reserving an order on the
+Airbnb platform. The class utilizes Selenium WebDriver for browser automation and interacts with the 'Reserve' button
+to initiate the reservation process. The primary method, 'click_reserve_button_and_verify_request_to_book_page',
+clicks on the 'Reserve' button using JavaScript and verifies the appearance of the 'Request to book' page. The code
+includes the definition of locators for the 'Reserve' button and the 'Request to book' page. Additionally,
+it incorporates WebDriverWait to handle potential delays during element interactions. The verification process
+asserts that the 'Request to book' page is displayed after clicking the 'Reserve' button, providing an informative
+error message in case of failure."""
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
